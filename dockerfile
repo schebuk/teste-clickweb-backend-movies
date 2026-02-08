@@ -1,10 +1,8 @@
+# Versão SIMPLES - sem arquivos .docker/
 FROM php:8.2-apache
 
-# ATUALIZAR repositórios PRIMEIRO
-RUN apt-get update && apt-get upgrade -y
-
-# Instalar dependências do sistema
-RUN apt-get install -y \
+# Atualizar e instalar dependências básicas
+RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
@@ -13,28 +11,31 @@ RUN apt-get install -y \
     libzip-dev \
     zip \
     unzip \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
+    && docker-php-ext-install pdo pdo_mysql mbstring zip gd xml \
+    && a2enmod rewrite
+
+# Configurar Apache DIRETAMENTE no Dockerfile
+RUN echo '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html/public\n\
+    <Directory /var/www/html/public>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Habilitar mod_rewrite do Apache
-RUN a2enmod rewrite
-
-# Copiar projeto
+# Copiar código
 COPY . /var/www/html/
 
 WORKDIR /var/www/html
 
-# Instalar dependências do Laravel
+# Instalar Laravel
 RUN composer install --no-dev --optimize-autoloader
 
 # Configurar permissões
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Configurar Apache
-COPY .docker/apache.conf /etc/apache2/sites-available/000-default.conf
+RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE 80
 CMD ["apache2-foreground"]
