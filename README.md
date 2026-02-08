@@ -1,59 +1,177 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Um catálogo de filmes moderno que consome dados da API MoviesDatabase via RapidAPI, com paginação e design responsivo.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+📋 Pré-requisitos
+PHP 7.4 ou superior
 
-## About Laravel
+Composer
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Laragon, XAMPP, WAMP ou ambiente PHP similar
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Conta no RapidAPI com acesso à MoviesDatabase API
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+🚀 Instalação
+1. Clone o projeto
+```bash
+git clone [url-do-repositorio]
+cd nome-do-projeto
+```
+2. Instale as dependências
+```bash
+composer install
+```
+3. Configure o ambiente
+Copie o arquivo .env.example para .env:
 
-## Learning Laravel
+```bash
+cp .env.example .env
+```
+4. Configure a chave da API
+No arquivo .env, adicione sua chave da RapidAPI:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```env
+MOVIES_API_KEY=sua-chave-da-rapidapi-aqui
+```
+5. Gere a chave do Laravel
+```bash
+php artisan key:generate
+```
+6. Configure o cache (opcional)
+```bash
+php artisan config:cache
+```
+🔑 Obtenha sua Chave da API
+Acesse RapidAPI - MoviesDatabase
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Cadastre-se ou faça login
 
-## Laravel Sponsors
+Inscreva-se no plano básico (gratuito)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Copie sua chave API do painel
 
-### Premium Partners
+Cole no arquivo .env
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+🏃‍♂️ Executando a Aplicação
+Com Laragon:
+Coloque a pasta do projeto em C:\laragon\www\
 
-## Contributing
+Inicie o Laragon
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+O projeto estará disponível em: http://nome-do-projeto.test
 
-## Code of Conduct
+Com PHP Built-in Server:
+```bash
+php artisan serve
+```
+Acesse: http://localhost:8000
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Com outros servidores:
+Configure o document root para a pasta public/
 
-## Security Vulnerabilities
+Certifique-se que o mod_rewrite está habilitado
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+📁 Estrutura do Projeto
+```text
+app/
+├── Http/
+│   └── Controllers/
+│       └── MovieController.php
+├── Services/
+│   └── MoviesApiService.php
+resources/
+├── views/
+│   └── movies/
+│       └── index.blade.php
+routes/
+└── web.php
+```
+🔧 Solução de Problemas
+Erro de Certificado SSL (Windows/Laragon)
+Se encontrar erro de certificado SSL, o serviço já está configurado com 'verify' => false.
 
-## License
+API não retorna dados
+Verifique se a chave da API está correta no .env
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Confirme se sua conta RapidAPI tem créditos disponíveis
+
+Teste a API diretamente:
+
+```bash
+php artisan tinker
+>>> $service = new App\Services\MoviesApiService();
+>>> $service->getMovies(1, 12);
+```
+Paginação não funciona
+A API tem um bug onde retorna entries: 1, mas o sistema está configurado para mostrar ~200 filmes com paginação de 25 por página.
+
+Imagens não carregam
+Alguns filmes podem não ter imagens. O sistema exibe um placeholder nesses casos.
+
+⚙️ Personalização
+Alterar número de filmes por página
+Edite MovieController.php:
+
+```php
+$limit = 25; // Altere este valor
+```
+Mudar lista de filmes
+Edite MoviesApiService.php:
+
+```php
+'list' => 'top_boxoffice_200', // Pode ser 'most_pop_movies', 'top_rated_250', etc.
+```
+Modificar o design
+Edite resources/views/movies/index.blade.php
+
+📊 Listas Disponíveis na API
+most_pop_movies - Filmes mais populares
+
+most_pop_series - Séries mais populares
+
+top_boxoffice_200 - Top 200 bilheterias
+
+top_rated_250 - Top 250 melhores avaliados
+
+top_rated_series_250 - Top 250 séries
+
+titles - Todos os títulos
+
+🔍 Testes
+Para testar a conexão com a API:
+
+```bash
+php artisan tinker
+>>> (new App\Services\MoviesApiService())->getMovies(1, 5);
+```
+📝 Notas
+A API tem limite de requisições (100/dia no plano gratuito)
+
+Cache é implementado por 1 hora para otimizar performance
+
+O sistema usa fallback para dados mock se a API falhar
+
+Design responsivo com Bootstrap 5
+
+🛠 Tecnologias Utilizadas
+Laravel 8/9/10
+
+Bootstrap 5
+
+GuzzleHTTP
+
+MoviesDatabase API
+
+📄 Licença
+Este projeto é para fins educacionais.
+
+🤝 Contribuindo
+Faça um Fork do projeto
+
+Crie uma branch para sua feature
+
+Commit suas mudanças
+
+Push para a branch
+
+Abra um Pull Request
+
+Desenvolvido com ❤️ usando Laravel e MoviesDatabase API
